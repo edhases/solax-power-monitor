@@ -3,8 +3,13 @@
 ## 1. Config flow (перше налаштування)
 
 ### Крок 1: вибір методу
-- Select: `local` / `cloud` / `modbus`.
+- Select: `local` / `cloud` / `modbus` / `discover`.
+- `discover` — сканує локальну підмережу (/24) на наявність донглів SolaX, показує знайдені IP, потім веде на форму local з підставленим host.
 - Disclaimer у тексті кроку.
+
+### Автовиявлення
+- **DHCP**: manifest містить matchers для Espressif hostname та типових OUI. HA сам пропонує налаштування з pre-filled IP.
+- **Модель** визначається автоматично з `type` у відповіді (model=None → decode by type).
 
 ### Крок 2 (local)
 - `host` (IP dongle), `port` (default 80), `password` (serial dongle).

@@ -27,6 +27,12 @@ Home Assistant custom integration for SolaX inverters. Connects an inverter with
 
 Copy `custom_components/solax_ha` to your Home Assistant `custom_components` directory, then restart.
 
+## Auto-discovery
+
+- **DHCP:** Home Assistant automatically detects Pocket WiFi dongles on your network (Espressif hostname/MAC) and offers to configure them with the IP pre-filled.
+- **Network scan:** choose the `discover` connection method to scan your local subnet for dongles; pick the found device, then enter the dongle password.
+- The inverter model is detected automatically from the API response (`type`).
+
 ## Configuration
 
 - **Local:** host (dongle IP), port (default 80), password (dongle registration number). Optional username for newer firmware.
