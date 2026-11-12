@@ -98,24 +98,63 @@ def _local_ipv4() -> str | None:
 
 
 async def _async_probe_host(host: str, port: int, timeout: float = 1.0) -> bool:
-    """Return True if the host answers like a SolaX Pocket WiFi dongle."""
+    """Return True if the host answers like a SolaX Pocket WiFi dongle.
+
+    The dongle password is unknown during discovery, so we accept either a
+    real-time payload (if the dongle allows passwordless reads) or a SolaX
+    specific response/web page signature.
+    """
     url = f"http://{host}:{port}/"
     headers = {"X-Forwarded-For": "5.8.8.8"}
     form = {"optType": "ReadRealTimeData", "pwd": ""}
     try:
-        async with (
-            aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as session,
-            session.post(url, data=form, headers=headers) as resp,
-        ):
-            if resp.status >= 400:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as session:
+            try:
+                async with session.post(url, data=form, headers=headers) as resp:
+                    text = await resp.text(errors="ignore")
+                    if resp.status < 500:
+                        try:
+                            payload = json.loads(text)
+                        except (TypeError, ValueError):
+                            payload = None
+                        if isinstance(payload, dict):
+                            if any(
+                                key in payload
+                                for key in (
+                                    "Data",
+                                    "data",
+                                    "sn",
+                                    "SN",
+                                    "type",
+                                    "Information",
+                                    "information",
+                                )
+                            ):
+                                return True
+                            exc = str(
+                                payload.get("exception")
+                                or payload.get("message")
+                                or payload.get("msg")
+                                or ""
+                            ).lower()
+                            if any(
+                                token in exc
+                                for token in ("pwd", "password", "solax", "inverter", "opttype")
+                            ):
+                                return True
+            except (TimeoutError, aiohttp.ClientError, OSError):
+                pass
+
+            try:
+                async with session.get(url) as resp:
+                    text = (await resp.text(errors="ignore")).lower()
+                    if any(token in text for token in ("solax", "pocket", "espressif", "opttype")):
+                        return True
+            except (TimeoutError, aiohttp.ClientError, OSError):
                 return False
-            payload = await resp.json(content_type=None)
-    except (TimeoutError, aiohttp.ClientError, ValueError, OSError):
+    except (TimeoutError, aiohttp.ClientError, OSError):
         return False
-    if not isinstance(payload, dict):
-        return False
-    data = payload.get("Data") or payload.get("data")
-    return isinstance(data, list) and len(data) >= 20
+    return False
 
 
 async def _async_scan_network(port: int = 80) -> list[str]:
