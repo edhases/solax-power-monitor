@@ -666,37 +666,59 @@ def _decode_type_100_101(solax: SolaxData, data: list[Any]) -> None:
 
 
 def _decode_type_102(solax: SolaxData, data: list[Any]) -> None:
-    """X1-Hybrid LV (type 102)."""
-    solax.yield_today = _div(safe_get(data, 18), 10.0)
-    solax.yield_total = _div(read_unsigned32(safe_get(data, 14), safe_get(data, 15)), 10.0)
-    pv1_power = safe_get(data, 9)
-    pv2_power = safe_get(data, 10)
-    solax.pv1_power = _int(pv1_power)
-    solax.pv2_power = _int(pv2_power)
-    solax.pv_power_total = _sum(pv1_power, pv2_power)
-    solax.battery_power = read_signed16(safe_get(data, 22))
-    solax.battery_current = _div(read_signed16(safe_get(data, 21)), 10.0)
-    solax.feed_in_power = read_signed32(safe_get(data, 29), safe_get(data, 30))
+    """X1-Hybrid LV / X1-Lite LV (type 102).
+
+    Index layout verified against a real X1-Hybrid-LV (firmware 1.002.09,
+    300-element payload) and the SolaX Cloud values.
+    """
+    # AC / grid side.
+    solax.grid_voltage_l1 = _div(safe_get(data, 0), 10.0)
+    solax.grid_current_l1 = _div(read_signed16(safe_get(data, 1)), 10.0)
     solax.grid_power = read_signed16(safe_get(data, 2))
-    solax.feed_in_energy = _div(read_unsigned32(safe_get(data, 31), safe_get(data, 32)), 100.0)
-    solax.consume_energy = _div(read_unsigned32(safe_get(data, 33), safe_get(data, 34)), 100.0)
-    solax.run_mode = _int(safe_get(data, 12))
-    solax.inverter_status = solax.run_mode
-    solax.eps_power_l1 = read_signed16(safe_get(data, 43))
+    solax.grid_frequency_l1 = _div(safe_get(data, 3), 100.0)
+
+    # PV strings (two MPPT on this family).
     solax.pv1_voltage = _div(safe_get(data, 5), 10.0)
     solax.pv2_voltage = _div(safe_get(data, 7), 10.0)
     solax.pv1_current = _div(safe_get(data, 6), 10.0)
     solax.pv2_current = _div(safe_get(data, 8), 10.0)
+    pv1_power = safe_get(data, 11)
+    pv2_power = safe_get(data, 12)
+    solax.pv1_power = _int(pv1_power)
+    solax.pv2_power = _int(pv2_power)
+    solax.pv_power_total = _sum(pv1_power, pv2_power)
+
+    # Run mode.
+    solax.run_mode = _int(safe_get(data, 12))
+    solax.inverter_status = solax.run_mode
+
+    # Battery. SoC/remaining/temperature use the 300-length layout.
+    solax.battery_voltage = _div(safe_get(data, 20), 10.0)
+    solax.battery_power = read_signed16(safe_get(data, 136))
+    if solax.battery_voltage and solax.battery_power is not None:
+        solax.battery_current = round(solax.battery_power / solax.battery_voltage, 2)
+    solax.battery_soc = _div(safe_get(data, 68), 10.0)
+    solax.battery_temp = read_signed16(safe_get(data, 79))
+    solax.battery_remaining_energy = _div(safe_get(data, 98), 10.0)
+    solax.battery_charge_energy_today = _div(safe_get(data, 27), 10.0)
+    solax.battery_discharge_energy_today = _div(safe_get(data, 28), 10.0)
+
+    # Energy totals (daily solar Data[51], lifetime solar Data[52..53]).
+    solax.pv_energy_today = _div(safe_get(data, 51), 10.0)
+    solax.pv_energy_total = _div(read_unsigned32(safe_get(data, 52), safe_get(data, 53)), 10.0)
+    solax.yield_today = solax.pv_energy_today
+    solax.yield_total = solax.pv_energy_total
+
+    # EPS / backup output.
     solax.eps_voltage_l1 = _div(safe_get(data, 41), 10.0)
     solax.eps_current_l1 = _div(read_signed16(safe_get(data, 42)), 10.0)
-    solax.battery_soc = _int(
-        safe_get(data, 18)
-    )  # docs: BatteryCapacity Data[18] (same as yield_today? odd); keep
-    solax.battery_voltage = _div(safe_get(data, 20), 10.0)
-    solax.battery_temp = _div(read_signed16(safe_get(data, 17)), 1.0)
-    solax.grid_voltage_l1 = _div(safe_get(data, 0), 10.0)
-    solax.grid_current_l1 = _div(read_signed16(safe_get(data, 1)), 10.0)
-    solax.grid_frequency_l1 = _div(safe_get(data, 3), 100.0)
+    solax.eps_power_l1 = read_signed16(safe_get(data, 43))
+
+    # Grid import/export power follows the sign of the grid power.
+    if solax.grid_power is not None:
+        solax.consume_power = max(0, solax.grid_power)
+        solax.feed_in_power = max(0, -solax.grid_power)
+    solax.feed_in_energy = _div(read_unsigned32(safe_get(data, 31), safe_get(data, 32)), 100.0)
 
 
 def _decode_legacy(solax: SolaxData, data: list[Any]) -> None:
