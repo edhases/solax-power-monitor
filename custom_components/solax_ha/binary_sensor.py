@@ -42,7 +42,9 @@ BINARY_SENSOR_DESCRIPTIONS: dict[str, BinarySensorEntityDescription] = {
     "battery_discharging": BinarySensorEntityDescription(
         key="battery_discharging",
         name="Battery Discharging",
-        device_class=BinarySensorDeviceClass.BATTERY,
+        # No standard binary_sensor device class for discharging; BATTERY
+        # would render as a "Low" battery state.
+        icon="mdi:battery-arrow-down",
     ),
     "pv_producing": BinarySensorEntityDescription(
         key="pv_producing",
@@ -186,12 +188,16 @@ class SolaxBinarySensor(SolaxEntity, BinarySensorEntity):
         key = self._key
 
         if key == "grid_connected":
-            code = _to_int(_data_get(data, "run_mode"))
+            # Prefer the normalized status (cloud style 100+), fall back to the
+            # raw local run mode.
+            code = _to_int(_data_get(data, "inverter_status"))
             if code is None:
-                code = _to_int(_data_get(data, "inverter_status"))
+                code = _to_int(_data_get(data, "run_mode"))
             if code is None:
                 return None
-            # EPS / off-grid
+            if code < 100:
+                # Local run modes: 6 = EPS check, 7 = EPS / off-grid.
+                return code not in (6, 7)
             return code not in (106, 107)
 
         if key == "battery_charging":

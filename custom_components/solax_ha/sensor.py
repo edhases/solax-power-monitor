@@ -620,11 +620,39 @@ async def async_setup_entry(
     if not serial:
         serial = getattr(entry, "unique_id", None)
 
+    # When the inverter is awake we only create entities for fields that are
+    # actually reported by this model. This avoids a wall of "unavailable"
+    # entities for fields that do not exist on the device.
+    skip_missing = data is not None and not getattr(data, "sleeping", False)
+
     entities: list[SolaxSensor] = []
+    active_keys: set[str] = set()
     for description in SENSOR_DESCRIPTIONS:
         group = description.group or _group_for_key(description.key)
         if group is not None and not group_enabled(group):
             continue
+        if skip_missing:
+            try:
+                if description.value_fn(data) is None:
+                    continue
+            except Exception:
+                continue
+        active_keys.add(description.key)
         entities.append(SolaxSensor(coordinator, description, serial))
+
+    # Drop registry entries for sensors this model no longer exposes, so a
+    # reload cleans up entities that were removed by the availability filter.
+    if skip_missing and serial:
+        from homeassistant.helpers import entity_registry as er
+
+        registry = er.async_get(hass)
+        for reg_entry in er.async_entries_for_config_entry(registry, entry.entry_id):
+            if reg_entry.domain != "sensor":
+                continue
+            unique_id = reg_entry.unique_id or ""
+            if unique_id.startswith(f"{serial}-"):
+                key = unique_id[len(serial) + 1 :]
+                if key not in active_keys:
+                    registry.async_remove(reg_entry.entity_id)
 
     async_add_entities(entities)

@@ -675,6 +675,7 @@ def _decode_type_102(solax: SolaxData, data: list[Any]) -> None:
     solax.pv2_power = _int(pv2_power)
     solax.pv_power_total = _sum(pv1_power, pv2_power)
     solax.battery_power = read_signed16(safe_get(data, 22))
+    solax.battery_current = _div(read_signed16(safe_get(data, 21)), 10.0)
     solax.feed_in_power = read_signed32(safe_get(data, 29), safe_get(data, 30))
     solax.grid_power = read_signed16(safe_get(data, 2))
     solax.feed_in_energy = _div(read_unsigned32(safe_get(data, 31), safe_get(data, 32)), 100.0)
