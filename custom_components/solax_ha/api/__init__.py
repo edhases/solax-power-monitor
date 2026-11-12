@@ -10,10 +10,10 @@ from .base import (
 from .local import SolaxLocalClient
 
 __all__ = [
-    "SolaxClient",
-    "SolaxLocalClient",
     "SolaxAuthError",
+    "SolaxClient",
     "SolaxConnectionError",
+    "SolaxLocalClient",
     "SolaxParseError",
     "SolaxRateLimitError",
 ]

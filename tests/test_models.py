@@ -1,4 +1,5 @@
 """Smoke tests for the Solax decoders (run in CI with HA available)."""
+
 from __future__ import annotations
 
 import sys
@@ -9,9 +10,9 @@ sys.path.insert(0, str(ROOT))
 
 # HA may not be installed locally; skip gracefully.
 try:
-    from custom_components.solax_ha.models import RawInverterData, decode, is_night_data
     from custom_components.solax_ha.const import SolaxData
-except Exception:  # noqa: BLE001
+    from custom_components.solax_ha.models import RawInverterData, decode, is_night_data
+except Exception:
     import pytest
 
     pytest.skip("Home Assistant not available", allow_module_level=True)

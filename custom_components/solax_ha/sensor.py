@@ -24,7 +24,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, SolaxData, STATUS_CODES
+from .const import STATUS_CODES, SolaxData
 from .coordinator import SolaxDataUpdateCoordinator
 from .entity import SolaxEntity
 
@@ -322,7 +322,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="battery_remaining_energy",
         name="Battery Remaining Energy",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.battery_remaining_energy,
@@ -341,7 +341,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="feed_in_energy",
         name="Feed-in Energy",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.feed_in_energy,
@@ -359,7 +359,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="consume_energy",
         name="Consumption Energy",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.consume_energy,
@@ -369,7 +369,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="yield_today",
         name="Yield Today",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.yield_today,
@@ -378,7 +378,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="yield_total",
         name="Yield Total",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.yield_total,
@@ -388,7 +388,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="battery_charge_energy_today",
         name="Battery Charge Energy Today",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.battery_charge_energy_today,
@@ -397,7 +397,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="battery_charge_energy_total",
         name="Battery Charge Energy Total",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.battery_charge_energy_total,
@@ -406,7 +406,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="battery_discharge_energy_today",
         name="Battery Discharge Energy Today",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.battery_discharge_energy_today,
@@ -415,7 +415,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="battery_discharge_energy_total",
         name="Battery Discharge Energy Total",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.battery_discharge_energy_total,
@@ -425,7 +425,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="pv_energy_today",
         name="PV Energy Today",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.pv_energy_today,
@@ -434,7 +434,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     SolaxSensorEntityDescription(
         key="pv_energy_total",
         name="PV Energy Total",
-        native_unit_of_measurement=UnitOfEnergy.KILOWATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.pv_energy_total,
@@ -583,7 +583,7 @@ class SolaxSensor(SolaxEntity, SensorEntity):
             return None
         try:
             return self.entity_description.value_fn(data)
-        except Exception:  # noqa: BLE001
+        except Exception:
             return None
 
     @property
@@ -595,7 +595,7 @@ class SolaxSensor(SolaxEntity, SensorEntity):
             return False
         try:
             value = self.entity_description.value_fn(data)
-        except Exception:  # noqa: BLE001
+        except Exception:
             value = None
         return value is not None
 

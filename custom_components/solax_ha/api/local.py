@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import aiohttp
-
 from homeassistant.core import HomeAssistant
 
 from ..const import (
@@ -34,7 +32,7 @@ class SolaxLocalClient(SolaxClient):
         host: str,
         port: int = _DEFAULT_PORT,
         password: str = "",
-        username: Optional[str] = None,
+        username: str | None = None,
         timeout: int = _DEFAULT_TIMEOUT,
         **kwargs: Any,
     ) -> None:
@@ -45,7 +43,7 @@ class SolaxLocalClient(SolaxClient):
         self.password = password if password is not None else ""
         self.username = username
         self.timeout = timeout if timeout is not None else _DEFAULT_TIMEOUT
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._session: aiohttp.ClientSession | None = None
 
     # ------------------------------------------------------------------
     # Session handling
@@ -77,18 +75,12 @@ class SolaxLocalClient(SolaxClient):
         timeout = aiohttp.ClientTimeout(total=self.timeout)
 
         try:
-            async with session.post(
-                url, data=form, headers=headers, timeout=timeout
-            ) as resp:
+            async with session.post(url, data=form, headers=headers, timeout=timeout) as resp:
                 status = resp.status
                 if status in (401, 403):
-                    raise SolaxAuthError(
-                        f"Authentication failed (HTTP {status})"
-                    )
+                    raise SolaxAuthError(f"Authentication failed (HTTP {status})")
                 if status >= 400:
-                    raise SolaxConnectionError(
-                        f"Inverter returned HTTP {status}"
-                    )
+                    raise SolaxConnectionError(f"Inverter returned HTTP {status}")
 
                 text = await resp.text()
                 if not text or not text.strip():
@@ -100,21 +92,19 @@ class SolaxLocalClient(SolaxClient):
                     # Fall back to aiohttp's json decoder for odd content-types.
                     try:
                         payload = await resp.json(content_type=None)
-                    except Exception:  # noqa: BLE001
-                        raise SolaxParseError(
-                            "Invalid JSON response from inverter"
-                        ) from err
+                    except Exception:
+                        raise SolaxParseError("Invalid JSON response from inverter") from err
         except SolaxAuthError:
             raise
         except SolaxConnectionError:
             raise
         except SolaxParseError:
             raise
-        except asyncio.TimeoutError as err:
+        except TimeoutError as err:
             raise SolaxConnectionError("Timeout connecting to inverter") from err
         except aiohttp.ClientError as err:
             raise SolaxConnectionError(str(err)) from err
-        except Exception as err:  # noqa: BLE001
+        except Exception as err:
             # Re-classify JSON errors raised above already handled; treat rest as parse.
             if isinstance(err, (SolaxAuthError, SolaxConnectionError, SolaxParseError)):
                 raise

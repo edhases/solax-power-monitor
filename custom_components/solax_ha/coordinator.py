@@ -72,7 +72,7 @@ class SolaxDataUpdateCoordinator(DataUpdateCoordinator[SolaxData]):
             SolaxParseError,
         ) as err:
             raise UpdateFailed(err) from err
-        except Exception as err:  # noqa: BLE001
+        except Exception as err:
             raise UpdateFailed(err) from err
 
         if raw is None:
@@ -87,7 +87,7 @@ class SolaxDataUpdateCoordinator(DataUpdateCoordinator[SolaxData]):
                 from . import models
 
                 data = models.decode(raw)
-            except Exception as err:  # noqa: BLE001
+            except Exception as err:
                 raise SolaxParseError(err) from err
 
         self._classify_sleeping(data)

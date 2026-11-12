@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from ..models import RawInverterData
 
 __all__ = [
-    "SolaxClient",
     "SolaxAuthError",
+    "SolaxClient",
     "SolaxConnectionError",
     "SolaxParseError",
     "SolaxRateLimitError",
@@ -33,7 +33,7 @@ class SolaxClient(abc.ABC):
         self.hass = hass
 
     @abc.abstractmethod
-    async def async_get_data(self) -> "RawInverterData":
+    async def async_get_data(self) -> RawInverterData:
         """Fetch and return raw inverter data."""
 
     @abc.abstractmethod

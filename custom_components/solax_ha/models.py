@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 from .const import SolaxData
 
@@ -54,7 +54,7 @@ def safe_get(container: Any, idx: int, default: Any = None) -> Any:
         return default
 
 
-def read_signed16(value: Any) -> Optional[int]:
+def read_signed16(value: Any) -> int | None:
     """Decode a signed 16-bit two's-complement value."""
     if value is None:
         return None
@@ -67,7 +67,7 @@ def read_signed16(value: Any) -> Optional[int]:
     return n
 
 
-def read_unsigned32(a: Any, b: Any) -> Optional[int]:
+def read_unsigned32(a: Any, b: Any) -> int | None:
     """Combine two 16-bit words into an unsigned 32-bit value (a + 65536*b)."""
     if a is None or b is None:
         return None
@@ -77,7 +77,7 @@ def read_unsigned32(a: Any, b: Any) -> Optional[int]:
         return None
 
 
-def read_signed32(a: Any, b: Any) -> Optional[int]:
+def read_signed32(a: Any, b: Any) -> int | None:
     """Combine two 16-bit words into a signed 32-bit value."""
     if a is None or b is None:
         return None
@@ -104,7 +104,7 @@ def is_night_data(data_list: Any) -> bool:
     return True
 
 
-def _div(value: Any, denom: float) -> Optional[float]:
+def _div(value: Any, denom: float) -> float | None:
     if value is None:
         return None
     try:
@@ -113,7 +113,7 @@ def _div(value: Any, denom: float) -> Optional[float]:
         return None
 
 
-def _int(value: Any) -> Optional[int]:
+def _int(value: Any) -> int | None:
     if value is None:
         return None
     try:
@@ -122,7 +122,7 @@ def _int(value: Any) -> Optional[int]:
         return None
 
 
-def _sum(*values: Any) -> Optional[float]:
+def _sum(*values: Any) -> float | None:
     nums = [v for v in values if v is not None]
     if not nums:
         return None
@@ -688,7 +688,9 @@ def _decode_type_102(solax: SolaxData, data: list[Any]) -> None:
     solax.pv2_current = _div(safe_get(data, 8), 10.0)
     solax.eps_voltage_l1 = _div(safe_get(data, 41), 10.0)
     solax.eps_current_l1 = _div(read_signed16(safe_get(data, 42)), 10.0)
-    solax.battery_soc = _int(safe_get(data, 18))  # docs: BatteryCapacity Data[18] (same as yield_today? odd); keep
+    solax.battery_soc = _int(
+        safe_get(data, 18)
+    )  # docs: BatteryCapacity Data[18] (same as yield_today? odd); keep
     solax.battery_voltage = _div(safe_get(data, 20), 10.0)
     solax.battery_temp = _div(read_signed16(safe_get(data, 17)), 1.0)
     solax.grid_voltage_l1 = _div(safe_get(data, 0), 10.0)
@@ -719,7 +721,9 @@ def _decode_legacy(solax: SolaxData, data: list[Any]) -> None:
     solax.battery_soc = _int(safe_get(data, 21))
     solax.feed_in_energy = _try_float(safe_get(data, 41))
     solax.consume_energy = _try_float(safe_get(data, 42))
-    solax.grid_power = _try_float(safe_get(data, 43)) if safe_get(data, 43) is not None else solax.grid_power
+    solax.grid_power = (
+        _try_float(safe_get(data, 43)) if safe_get(data, 43) is not None else solax.grid_power
+    )
     # phase powers override total only if present? keep grid_power as Data[6] for legacy (already set)
     solax.grid_current_l2 = _try_float(safe_get(data, 46))
     solax.grid_current_l3 = _try_float(safe_get(data, 47))
@@ -741,7 +745,7 @@ def _decode_legacy(solax: SolaxData, data: list[Any]) -> None:
     solax.eps_power_l3 = _try_float(safe_get(data, 92))
 
 
-def _try_float(value: Any) -> Optional[float]:
+def _try_float(value: Any) -> float | None:
     if value is None:
         return None
     try:
@@ -797,9 +801,9 @@ def decode(raw: Any) -> SolaxData:
             _LOGGER.warning("Unknown SolaX inverter type %s; using generic fallback", tc)
             try:
                 _decode_legacy(solax, data)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 _LOGGER.exception("Generic fallback failed for type %s", tc)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         _LOGGER.exception("Decoder failed for type %s: %s", tc, exc)
 
     if tc not in MODEL_NAMES and tc >= 0:

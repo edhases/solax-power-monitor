@@ -1,4 +1,5 @@
 """Binary sensor platform for the SolaX HA integration."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -114,7 +115,7 @@ async def async_setup_entry(
             coordinator = getattr(candidate, "coordinator", None)
     if coordinator is None:
         # last resort: scan hass.data values
-        for value in (domain_data.values() if isinstance(domain_data, dict) else []):
+        for value in domain_data.values() if isinstance(domain_data, dict) else []:
             if hasattr(value, "coordinator"):
                 coordinator = getattr(value, "coordinator", None)
                 if coordinator is not None:
@@ -140,11 +141,10 @@ class SolaxBinarySensor(SolaxEntity, BinarySensorEntity):
             description = key_or_description
         elif isinstance(key_or_description, str):
             key = key_or_description
-        elif key_or_description is not None and key is None:
+        elif key_or_description is not None and key is None and hasattr(key_or_description, "key"):
             # allow positional object with .key
-            if hasattr(key_or_description, "key"):
-                key = getattr(key_or_description, "key")
-                description = key_or_description
+            key = key_or_description.key
+            description = key_or_description
 
         if description is not None and key is None:
             key = getattr(description, "key", None)
@@ -263,5 +263,5 @@ class SolaxBinarySensor(SolaxEntity, BinarySensorEntity):
             return value
         try:
             return bool(value)
-        except Exception:  # noqa: BLE001
+        except Exception:
             return None

@@ -27,13 +27,12 @@ from .const import (
     DEFAULT_SCAN_INTERVAL_LOCAL,
     DEFAULT_SCAN_INTERVAL_MODBUS,
     DEFAULT_TIMEOUT,
-    DOMAIN,
 )
 from .coordinator import SolaxDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["sensor", "binary_sensor"]
+PLATFORMS = ["sensor", "binary_sensor", "select", "number", "switch", "button"]
 
 
 @dataclass
@@ -55,13 +54,11 @@ def _default_scan_interval(connection_type: str) -> int:
     }.get(connection_type, DEFAULT_SCAN_INTERVAL_LOCAL)
 
 
-async def _create_local_client(
-    hass: HomeAssistant, entry: ConfigEntry, timeout: int
-) -> Any:
+async def _create_local_client(hass: HomeAssistant, entry: ConfigEntry, timeout: int) -> Any:
     """Import and instantiate the local client, tolerating parallel development."""
     try:
         module = importlib.import_module("custom_components.solax_ha.api.local")
-    except Exception as err:  # noqa: BLE001
+    except Exception as err:
         raise ConfigEntryNotReady("Local API module is not available yet") from err
 
     # Prefer an explicit factory if the module provides one.
@@ -140,9 +137,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     night_mode = options.get("night_mode", data.get("night_mode", "unavailable"))
 
     if connection_type != CONNECTION_TYPE_LOCAL:
-        raise ConfigEntryNotReady(
-            f"Connection method {connection_type!r} is not implemented yet"
-        )
+        raise ConfigEntryNotReady(f"Connection method {connection_type!r} is not implemented yet")
 
     client = await _create_local_client(hass, entry, timeout)
     coordinator = SolaxDataUpdateCoordinator(hass, client, scan_interval, night_mode)
@@ -152,7 +147,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await coordinator.async_config_entry_first_refresh()
     except ConfigEntryNotReady:
         _LOGGER.warning("Initial refresh failed; continuing optimistically")
-    except Exception as err:  # noqa: BLE001
+    except Exception as err:
         _LOGGER.warning("Initial refresh failed: %s", err)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -172,6 +167,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     result = closer()
                     if inspect.isawaitable(result):
                         await result
-                except Exception:  # noqa: BLE001
+                except Exception:
                     _LOGGER.exception("Error closing SolaX client")
     return unload_ok

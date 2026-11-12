@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 DOMAIN = "solax_ha"
 # Manufacturer string. Disclaimer: this is an unofficial community integration,
@@ -105,83 +105,83 @@ class SolaxData:
     """Normalized inverter data. All fields optional (None if unavailable)."""
 
     # Grid
-    grid_voltage_l1: Optional[float] = None
-    grid_voltage_l2: Optional[float] = None
-    grid_voltage_l3: Optional[float] = None
-    grid_current_l1: Optional[float] = None
-    grid_current_l2: Optional[float] = None
-    grid_current_l3: Optional[float] = None
-    grid_power: Optional[float] = None
-    grid_frequency_l1: Optional[float] = None
-    grid_frequency_l2: Optional[float] = None
-    grid_frequency_l3: Optional[float] = None
+    grid_voltage_l1: float | None = None
+    grid_voltage_l2: float | None = None
+    grid_voltage_l3: float | None = None
+    grid_current_l1: float | None = None
+    grid_current_l2: float | None = None
+    grid_current_l3: float | None = None
+    grid_power: float | None = None
+    grid_frequency_l1: float | None = None
+    grid_frequency_l2: float | None = None
+    grid_frequency_l3: float | None = None
 
     # PV strings
-    pv1_voltage: Optional[float] = None
-    pv1_current: Optional[float] = None
-    pv1_power: Optional[float] = None
-    pv2_voltage: Optional[float] = None
-    pv2_current: Optional[float] = None
-    pv2_power: Optional[float] = None
-    pv3_voltage: Optional[float] = None
-    pv3_current: Optional[float] = None
-    pv3_power: Optional[float] = None
-    pv4_voltage: Optional[float] = None
-    pv4_current: Optional[float] = None
-    pv4_power: Optional[float] = None
-    pv_power_total: Optional[float] = None
+    pv1_voltage: float | None = None
+    pv1_current: float | None = None
+    pv1_power: float | None = None
+    pv2_voltage: float | None = None
+    pv2_current: float | None = None
+    pv2_power: float | None = None
+    pv3_voltage: float | None = None
+    pv3_current: float | None = None
+    pv3_power: float | None = None
+    pv4_voltage: float | None = None
+    pv4_current: float | None = None
+    pv4_power: float | None = None
+    pv_power_total: float | None = None
 
     # Battery
-    battery_voltage: Optional[float] = None
-    battery_current: Optional[float] = None
-    battery_power: Optional[float] = None
-    battery_soc: Optional[float] = None
-    battery_temp: Optional[float] = None
-    battery_remaining_energy: Optional[float] = None
-    battery_status: Optional[Any] = None
+    battery_voltage: float | None = None
+    battery_current: float | None = None
+    battery_power: float | None = None
+    battery_soc: float | None = None
+    battery_temp: float | None = None
+    battery_remaining_energy: float | None = None
+    battery_status: Any | None = None
 
     # Grid energy / power
-    feed_in_power: Optional[float] = None
-    feed_in_energy: Optional[float] = None
-    consume_power: Optional[float] = None
-    consume_energy: Optional[float] = None
+    feed_in_power: float | None = None
+    feed_in_energy: float | None = None
+    consume_power: float | None = None
+    consume_energy: float | None = None
 
     # Yield
-    yield_today: Optional[float] = None
-    yield_total: Optional[float] = None
+    yield_today: float | None = None
+    yield_total: float | None = None
 
     # Battery energy
-    battery_charge_energy_today: Optional[float] = None
-    battery_charge_energy_total: Optional[float] = None
-    battery_discharge_energy_today: Optional[float] = None
-    battery_discharge_energy_total: Optional[float] = None
+    battery_charge_energy_today: float | None = None
+    battery_charge_energy_total: float | None = None
+    battery_discharge_energy_today: float | None = None
+    battery_discharge_energy_total: float | None = None
 
     # PV energy
-    pv_energy_today: Optional[float] = None
-    pv_energy_total: Optional[float] = None
+    pv_energy_today: float | None = None
+    pv_energy_total: float | None = None
 
     # EPS
-    eps_power_l1: Optional[float] = None
-    eps_power_l2: Optional[float] = None
-    eps_power_l3: Optional[float] = None
-    eps_voltage_l1: Optional[float] = None
-    eps_voltage_l2: Optional[float] = None
-    eps_voltage_l3: Optional[float] = None
-    eps_current_l1: Optional[float] = None
-    eps_current_l2: Optional[float] = None
-    eps_current_l3: Optional[float] = None
+    eps_power_l1: float | None = None
+    eps_power_l2: float | None = None
+    eps_power_l3: float | None = None
+    eps_voltage_l1: float | None = None
+    eps_voltage_l2: float | None = None
+    eps_voltage_l3: float | None = None
+    eps_current_l1: float | None = None
+    eps_current_l2: float | None = None
+    eps_current_l3: float | None = None
 
     # Temperatures
-    inverter_temp: Optional[float] = None
-    radiator_temp: Optional[float] = None
+    inverter_temp: float | None = None
+    radiator_temp: float | None = None
 
     # Status
-    run_mode: Optional[Any] = None
-    inverter_status: Optional[Any] = None
-    inverter_type: Optional[Any] = None
-    upload_time: Optional[Any] = None
-    serial_number: Optional[str] = None
-    sleeping: Optional[bool] = None
+    run_mode: Any | None = None
+    inverter_status: Any | None = None
+    inverter_type: Any | None = None
+    upload_time: Any | None = None
+    serial_number: str | None = None
+    sleeping: bool | None = None
 
     # Diagnostics
     raw: Any = field(default=None)
