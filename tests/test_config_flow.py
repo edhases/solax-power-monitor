@@ -23,9 +23,7 @@ except Exception:
 
 
 async def test_user_step_returns_form(hass: HomeAssistant) -> None:
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": "user"}
-    )
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
 
     assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "user"
@@ -48,9 +46,7 @@ async def test_local_step_validation_success(hass: HomeAssistant) -> None:
         "custom_components.solax_ha.api.local.SolaxLocalClient",
         return_value=client,
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": "user"}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"method": CONNECTION_TYPE_LOCAL}
         )
@@ -74,9 +70,7 @@ async def test_local_step_validation_failure(hass: HomeAssistant) -> None:
         "custom_components.solax_ha.api.local.SolaxLocalClient",
         return_value=client,
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": "user"}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {"method": CONNECTION_TYPE_LOCAL}
         )

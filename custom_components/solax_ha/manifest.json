@@ -8,6 +8,7 @@
   "requirements": [],
   "dhcp": [
     {"hostname": "espressif*"},
+    {"macaddress": "48CA43*"},
     {"macaddress": "240AC4*"},
     {"macaddress": "30AEA4*"},
     {"macaddress": "3C71BF*"},

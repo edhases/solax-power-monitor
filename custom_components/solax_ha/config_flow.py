@@ -97,6 +97,34 @@ def _local_ipv4() -> str | None:
         sock.close()
 
 
+def _looks_like_solax_body(text: str) -> bool:
+    """Return True if a response body looks like a SolaX dongle response."""
+    if not text:
+        return False
+    stripped = text.strip()
+    lowered = stripped.lower()
+    # Dongles reply with e.g. ``0:code,message:"failed"}`` when the password
+    # is missing/wrong, or with a JSON real-time payload when it is correct.
+    if "code,message" in lowered:
+        return True
+    if any(token in lowered for token in ("solax", "pocket", "espressif", "opttype")):
+        return True
+    try:
+        payload = json.loads(stripped)
+    except (TypeError, ValueError):
+        return False
+    if not isinstance(payload, dict):
+        return False
+    if any(
+        key in payload for key in ("Data", "data", "sn", "SN", "type", "Information", "information")
+    ):
+        return True
+    exc = str(
+        payload.get("exception") or payload.get("message") or payload.get("msg") or ""
+    ).lower()
+    return any(token in exc for token in ("pwd", "password", "solax", "inverter", "opttype"))
+
+
 async def _async_probe_host(host: str, port: int, timeout: float = 1.0) -> bool:
     """Return True if the host answers like a SolaX Pocket WiFi dongle.
 
@@ -113,42 +141,19 @@ async def _async_probe_host(host: str, port: int, timeout: float = 1.0) -> bool:
                 async with session.post(url, data=form, headers=headers) as resp:
                     text = await resp.text(errors="ignore")
                     if resp.status < 500:
-                        try:
-                            payload = json.loads(text)
-                        except (TypeError, ValueError):
-                            payload = None
-                        if isinstance(payload, dict):
-                            if any(
-                                key in payload
-                                for key in (
-                                    "Data",
-                                    "data",
-                                    "sn",
-                                    "SN",
-                                    "type",
-                                    "Information",
-                                    "information",
-                                )
-                            ):
-                                return True
-                            exc = str(
-                                payload.get("exception")
-                                or payload.get("message")
-                                or payload.get("msg")
-                                or ""
-                            ).lower()
-                            if any(
-                                token in exc
-                                for token in ("pwd", "password", "solax", "inverter", "opttype")
-                            ):
-                                return True
+                        if _looks_like_solax_body(text):
+                            return True
+                        # A device answered on the API port with a body; if it is
+                        # not SolaX there is no point in the GET fallback.
+                        if text.strip():
+                            return False
             except (TimeoutError, aiohttp.ClientError, OSError):
                 pass
 
             try:
                 async with session.get(url) as resp:
-                    text = (await resp.text(errors="ignore")).lower()
-                    if any(token in text for token in ("solax", "pocket", "espressif", "opttype")):
+                    text = await resp.text(errors="ignore")
+                    if _looks_like_solax_body(text):
                         return True
             except (TimeoutError, aiohttp.ClientError, OSError):
                 return False

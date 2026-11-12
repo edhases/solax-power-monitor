@@ -809,4 +809,13 @@ def decode(raw: Any) -> SolaxData:
     if tc not in MODEL_NAMES and tc >= 0:
         _LOGGER.warning("Unknown SolaX inverter type code: %s", tc)
 
+    # Local API reports raw run modes (0-13); the cloud exposes them as
+    # 100-113. Normalize so the shared status table works for both.
+    if solax.run_mode is not None and solax.inverter_status is not None:
+        try:
+            if int(solax.inverter_status) == int(solax.run_mode) and int(solax.run_mode) < 100:
+                solax.inverter_status = int(solax.run_mode) + 100
+        except (TypeError, ValueError):
+            pass
+
     return solax
