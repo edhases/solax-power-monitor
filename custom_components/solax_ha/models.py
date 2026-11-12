@@ -714,10 +714,11 @@ def _decode_type_102(solax: SolaxData, data: list[Any]) -> None:
     solax.eps_current_l1 = _div(read_signed16(safe_get(data, 42)), 10.0)
     solax.eps_power_l1 = read_signed16(safe_get(data, 43))
 
-    # Grid import/export power follows the sign of the grid power.
+    # On this family a negative grid power means power is drawn FROM the grid
+    # (import), and a positive value means export.
     if solax.grid_power is not None:
-        solax.consume_power = max(0, solax.grid_power)
-        solax.feed_in_power = max(0, -solax.grid_power)
+        solax.consume_power = max(0, -solax.grid_power)
+        solax.feed_in_power = max(0, solax.grid_power)
     solax.feed_in_energy = _div(read_unsigned32(safe_get(data, 31), safe_get(data, 32)), 100.0)
 
 
