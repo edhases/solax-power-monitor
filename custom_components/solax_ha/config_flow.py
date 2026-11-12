@@ -285,8 +285,7 @@ class SolaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 timeout=DEFAULT_TIMEOUT,
             )
             try:
-                await client.async_validate()
-                raw = await client.async_get_data()
+                raw = await client.async_validate()
             except Exception as err:
                 errors["base"] = _err_from_exception(err)
                 await _safe_close(client)

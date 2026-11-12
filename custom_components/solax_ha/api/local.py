@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from typing import Any
@@ -55,16 +56,25 @@ class SolaxLocalClient(SolaxClient):
     def _ensure_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
             timeout = aiohttp.ClientTimeout(total=self.timeout)
-            self._session = aiohttp.ClientSession(timeout=timeout)
+            self._session = aiohttp.ClientSession(
+                timeout=timeout,
+                # Some Pocket WiFi dongles close the connection after every
+                # response, so do not reuse keep-alive connections.
+                connector=aiohttp.TCPConnector(force_close=True),
+            )
         return self._session
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
-    async def async_validate(self) -> bool:
-        """Probe the inverter with a single real-time data request."""
-        await self.async_get_data()
-        return True
+    async def async_validate(self) -> RawInverterData:
+        """Probe the inverter and return the fetched data.
+
+        The dongle often drops the connection if two requests are sent in
+        quick succession, so callers must reuse this result instead of
+        issuing a second request.
+        """
+        return await self.async_get_data()
 
     async def async_get_data(self) -> RawInverterData:
         """Fetch real-time data from the dongle and parse it."""
@@ -74,41 +84,48 @@ class SolaxLocalClient(SolaxClient):
         form = {"optType": "ReadRealTimeData", "pwd": self.password}
         timeout = aiohttp.ClientTimeout(total=self.timeout)
 
-        try:
-            async with session.post(url, data=form, headers=headers, timeout=timeout) as resp:
-                status = resp.status
-                if status in (401, 403):
-                    raise SolaxAuthError(f"Authentication failed (HTTP {status})")
-                if status >= 400:
-                    raise SolaxConnectionError(f"Inverter returned HTTP {status}")
+        payload = None
+        last_err: Exception | None = None
+        # Pocket WiFi dongles frequently drop the connection after a response,
+        # so retry a couple of times with a short backoff before giving up.
+        for attempt in range(3):
+            try:
+                async with session.post(url, data=form, headers=headers, timeout=timeout) as resp:
+                    status = resp.status
+                    if status in (401, 403):
+                        raise SolaxAuthError(f"Authentication failed (HTTP {status})")
+                    if status >= 400:
+                        raise SolaxConnectionError(f"Inverter returned HTTP {status}")
 
-                text = await resp.text()
-                if not text or not text.strip():
-                    raise SolaxConnectionError("Empty response from inverter")
+                    text = await resp.text()
+                    if not text or not text.strip():
+                        raise SolaxConnectionError("Empty response from inverter")
 
-                try:
-                    payload = json.loads(text)
-                except (ValueError, TypeError) as err:
-                    # Fall back to aiohttp's json decoder for odd content-types.
                     try:
-                        payload = await resp.json(content_type=None)
-                    except Exception:
-                        raise SolaxParseError("Invalid JSON response from inverter") from err
-        except SolaxAuthError:
-            raise
-        except SolaxConnectionError:
-            raise
-        except SolaxParseError:
-            raise
-        except TimeoutError as err:
-            raise SolaxConnectionError("Timeout connecting to inverter") from err
-        except aiohttp.ClientError as err:
-            raise SolaxConnectionError(str(err)) from err
-        except Exception as err:
-            # Re-classify JSON errors raised above already handled; treat rest as parse.
-            if isinstance(err, (SolaxAuthError, SolaxConnectionError, SolaxParseError)):
+                        payload = json.loads(text)
+                    except (ValueError, TypeError) as err:
+                        # Fall back to aiohttp's json decoder for odd content-types.
+                        try:
+                            payload = await resp.json(content_type=None)
+                        except Exception:
+                            raise SolaxParseError("Invalid JSON response from inverter") from err
+                break
+            except (SolaxAuthError, SolaxParseError):
                 raise
-            raise SolaxParseError(str(err)) from err
+            except SolaxConnectionError as err:
+                last_err = err
+            except (TimeoutError, aiohttp.ClientError, OSError) as err:
+                last_err = err
+            except Exception as err:
+                if isinstance(err, (SolaxAuthError, SolaxConnectionError, SolaxParseError)):
+                    raise
+                raise SolaxParseError(str(err)) from err
+
+            if attempt < 2:
+                await asyncio.sleep(0.6 * (attempt + 1))
+
+        if payload is None:
+            raise SolaxConnectionError(str(last_err or "No response from inverter"))
 
         if not isinstance(payload, dict):
             raise SolaxParseError("Unexpected response payload type")

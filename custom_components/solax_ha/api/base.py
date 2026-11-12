@@ -37,8 +37,8 @@ class SolaxClient(abc.ABC):
         """Fetch and return raw inverter data."""
 
     @abc.abstractmethod
-    async def async_validate(self) -> bool:
-        """Validate the connection/credentials with a single probe request."""
+    async def async_validate(self) -> RawInverterData:
+        """Validate the connection/credentials and return the fetched data."""
 
     @abc.abstractmethod
     async def async_close(self) -> None:
