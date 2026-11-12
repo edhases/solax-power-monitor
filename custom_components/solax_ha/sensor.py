@@ -324,7 +324,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
         name="Battery Remaining Energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=None,
         value_fn=lambda data: data.battery_remaining_energy,
         group="battery",
     ),
