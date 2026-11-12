@@ -1,0 +1,11 @@
+refresh:
+  name: Refresh
+  description: Force an immediate refresh of data from the SolaX inverter.
+  fields:
+    entry_id:
+      name: Config entry
+      description: The config entry to refresh. If omitted, all entries are refreshed.
+      required: false
+      selector:
+        config_entry:
+          integration: solax_ha

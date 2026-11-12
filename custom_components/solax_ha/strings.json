@@ -1,0 +1,205 @@
+{
+  "title": "SolaX Power Monitor (community)",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Choose connection method",
+        "description": "Select how to connect to your SolaX inverter.\n\nDisclaimer: This is a community integration and is not affiliated with SolaX Power Co., Ltd.",
+        "data": {
+          "method": "Connection method"
+        },
+        "data_description": {
+          "method": "Choose local (Pocket WiFi), cloud (SolaX Cloud) or Modbus."
+        }
+      },
+      "local": {
+        "title": "Local connection",
+        "description": "Connect directly to the Pocket WiFi dongle on your local network.",
+        "data": {
+          "host": "Host (dongle IP)",
+          "port": "Port",
+          "password": "Dongle password",
+          "username": "Username (optional)"
+        },
+        "data_description": {
+          "host": "IP address of the Pocket WiFi dongle.",
+          "port": "HTTP port of the dongle (default 80).",
+          "password": "Registration number of the dongle (not the inverter serial).",
+          "username": "For newer firmware with Basic Auth."
+        }
+      },
+      "cloud": {
+        "title": "Cloud connection",
+        "description": "Connect via the SolaX Cloud API.",
+        "data": {
+          "token_id": "Token ID",
+          "serial_number": "Serial number",
+          "domain": "Domain"
+        },
+        "data_description": {
+          "token_id": "Token ID from SolaX Cloud (Service -> API).",
+          "serial_number": "10-character registration number of the communication module.",
+          "domain": "Cloud domain (default global.solaxcloud.com)."
+        }
+      },
+      "modbus": {
+        "title": "Modbus connection",
+        "description": "Connect via Modbus TCP or RTU through the monitoring module.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit ID",
+          "connection_type": "Connection type",
+          "serial_port": "Serial port",
+          "baudrate": "Baud rate"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Modbus gateway.",
+          "port": "Modbus TCP port (default 502).",
+          "unit_id": "Slave/unit ID (default 1).",
+          "connection_type": "TCP or RTU.",
+          "serial_port": "Serial device path for RTU mode.",
+          "baudrate": "Baud rate for RTU mode (default 19200)."
+        }
+      },
+      "select_model": {
+        "title": "Select inverter model",
+        "description": "Multiple inverter models were detected. Choose the one that matches your device.",
+        "data": {
+          "model": "Inverter model"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the inverter.",
+      "invalid_auth": "Invalid authentication credentials.",
+      "already_configured": "This device is already configured.",
+      "no_inverter_found": "No inverter found at the given address.",
+      "unsupported_model": "The detected inverter model is not supported.",
+      "unknown": "Unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "description": "Configure polling, model and entity groups.",
+        "data": {
+          "scan_interval": "Scan interval (seconds)",
+          "timeout": "Request timeout (seconds)",
+          "model_override": "Model override",
+          "entity_group_pv": "PV entities",
+          "entity_group_battery": "Battery entities",
+          "entity_group_grid": "Grid entities",
+          "entity_group_inverter": "Inverter entities",
+          "entity_group_eps": "EPS entities",
+          "entity_group_energy": "Energy totals",
+          "night_mode": "Night mode"
+        },
+        "data_description": {
+          "scan_interval": "How often to poll the inverter.",
+          "timeout": "Request timeout in seconds (5-30).",
+          "model_override": "Auto-detect or manually select a model.",
+          "entity_group_pv": "Enable PV string sensors.",
+          "entity_group_battery": "Enable battery sensors.",
+          "entity_group_grid": "Enable grid sensors.",
+          "entity_group_inverter": "Enable inverter sensors.",
+          "entity_group_eps": "Enable EPS sensors.",
+          "entity_group_energy": "Enable energy total sensors.",
+          "night_mode": "Behavior when the inverter is asleep."
+        }
+      }
+    },
+    "error": {
+      "unknown": "Unexpected error occurred."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "ac_power": { "name": "AC Power" },
+      "grid_power": { "name": "Grid Power" },
+      "grid_voltage_l1": { "name": "Grid Voltage L1" },
+      "grid_voltage_l2": { "name": "Grid Voltage L2" },
+      "grid_voltage_l3": { "name": "Grid Voltage L3" },
+      "grid_current_l1": { "name": "Grid Current L1" },
+      "grid_current_l2": { "name": "Grid Current L2" },
+      "grid_current_l3": { "name": "Grid Current L3" },
+      "grid_frequency": { "name": "Grid Frequency" },
+      "pv1_voltage": { "name": "PV1 Voltage" },
+      "pv1_current": { "name": "PV1 Current" },
+      "pv1_power": { "name": "PV1 Power" },
+      "pv2_voltage": { "name": "PV2 Voltage" },
+      "pv2_current": { "name": "PV2 Current" },
+      "pv2_power": { "name": "PV2 Power" },
+      "pv3_voltage": { "name": "PV3 Voltage" },
+      "pv3_current": { "name": "PV3 Current" },
+      "pv3_power": { "name": "PV3 Power" },
+      "pv4_voltage": { "name": "PV4 Voltage" },
+      "pv4_current": { "name": "PV4 Current" },
+      "pv4_power": { "name": "PV4 Power" },
+      "pv_power_total": { "name": "PV Power Total" },
+      "battery_voltage": { "name": "Battery Voltage" },
+      "battery_current": { "name": "Battery Current" },
+      "battery_power": { "name": "Battery Power" },
+      "battery_soc": { "name": "Battery SoC" },
+      "battery_temp": { "name": "Battery Temperature" },
+      "battery_remaining_energy": { "name": "Battery Remaining Energy" },
+      "feed_in_power": { "name": "Feed-in Power" },
+      "feed_in_energy": { "name": "Feed-in Energy" },
+      "consume_power": { "name": "Consumption Power" },
+      "consume_energy": { "name": "Consumption Energy" },
+      "yield_today": { "name": "Yield Today" },
+      "yield_total": { "name": "Yield Total" },
+      "battery_charge_energy_today": { "name": "Battery Charge Energy Today" },
+      "battery_charge_energy_total": { "name": "Battery Charge Energy Total" },
+      "battery_discharge_energy_today": { "name": "Battery Discharge Energy Today" },
+      "battery_discharge_energy_total": { "name": "Battery Discharge Energy Total" },
+      "pv_energy_today": { "name": "PV Energy Today" },
+      "pv_energy_total": { "name": "PV Energy Total" },
+      "eps_power_l1": { "name": "EPS Power L1" },
+      "eps_power_l2": { "name": "EPS Power L2" },
+      "eps_power_l3": { "name": "EPS Power L3" },
+      "eps_voltage_l1": { "name": "EPS Voltage L1" },
+      "eps_voltage_l2": { "name": "EPS Voltage L2" },
+      "eps_voltage_l3": { "name": "EPS Voltage L3" },
+      "eps_current_l1": { "name": "EPS Current L1" },
+      "eps_current_l2": { "name": "EPS Current L2" },
+      "eps_current_l3": { "name": "EPS Current L3" },
+      "inverter_temp": { "name": "Inverter Temperature" },
+      "radiator_temp": { "name": "Radiator Temperature" },
+      "inverter_status": { "name": "Inverter Status" },
+      "run_mode": { "name": "Run Mode" }
+    },
+    "binary_sensor": {
+      "grid_connected": { "name": "Grid Connected" },
+      "battery_charging": { "name": "Battery Charging" },
+      "battery_discharging": { "name": "Battery Discharging" },
+      "pv_producing": { "name": "PV Producing" },
+      "feed_in_active": { "name": "Feeding In" },
+      "consuming_from_grid": { "name": "Consuming From Grid" },
+      "inverter_fault": { "name": "Inverter Fault" },
+      "inverter_sleeping": { "name": "Inverter Sleeping" }
+    },
+    "select": {
+      "scan_interval": { "name": "Scan Interval" }
+    },
+    "number": {
+      "scan_interval_custom": { "name": "Custom Scan Interval" }
+    },
+    "switch": {
+      "entity_group_pv": { "name": "PV Entities" },
+      "entity_group_battery": { "name": "Battery Entities" },
+      "entity_group_grid": { "name": "Grid Entities" },
+      "entity_group_inverter": { "name": "Inverter Entities" },
+      "entity_group_eps": { "name": "EPS Entities" },
+      "entity_group_energy": { "name": "Energy Entities" }
+    },
+    "button": {
+      "refresh": { "name": "Refresh" },
+      "reconnect": { "name": "Reconnect" }
+    }
+  }
+}

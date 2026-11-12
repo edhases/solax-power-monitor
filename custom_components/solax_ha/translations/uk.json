@@ -1,0 +1,205 @@
+{
+  "title": "SolaX Power Monitor (community)",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Вибір методу підключення",
+        "description": "Оберіть спосіб підключення до інвертора SolaX.\n\nЗастереження: це community-інтеграція, не пов'язана з SolaX Power Co., Ltd.",
+        "data": {
+          "method": "Метод підключення"
+        },
+        "data_description": {
+          "method": "Оберіть локальний (Pocket WiFi), хмарний (SolaX Cloud) або Modbus."
+        }
+      },
+      "local": {
+        "title": "Локальне підключення",
+        "description": "Підключення безпосередньо до донгла Pocket WiFi у локальній мережі.",
+        "data": {
+          "host": "Хост (IP донгла)",
+          "port": "Порт",
+          "password": "Пароль донгла",
+          "username": "Ім'я користувача (необов'язково)"
+        },
+        "data_description": {
+          "host": "IP-адреса донгла Pocket WiFi.",
+          "port": "HTTP-порт донгла (за замовчуванням 80).",
+          "password": "Реєстраційний номер донгла (не серійний інвертора).",
+          "username": "Для нової прошивки з Basic Auth."
+        }
+      },
+      "cloud": {
+        "title": "Хмарне підключення",
+        "description": "Підключення через SolaX Cloud API.",
+        "data": {
+          "token_id": "Token ID",
+          "serial_number": "Серійний номер",
+          "domain": "Домен"
+        },
+        "data_description": {
+          "token_id": "Token ID з SolaX Cloud (Service -> API).",
+          "serial_number": "10-символьний реєстраційний номер комунікаційного модуля.",
+          "domain": "Хмарний домен (за замовчуванням global.solaxcloud.com)."
+        }
+      },
+      "modbus": {
+        "title": "Підключення Modbus",
+        "description": "Підключення через Modbus TCP або RTU через моніторинг-модуль.",
+        "data": {
+          "host": "Хост",
+          "port": "Порт",
+          "unit_id": "ID пристрою",
+          "connection_type": "Тип підключення",
+          "serial_port": "Серійний порт",
+          "baudrate": "Швидкість (бод)"
+        },
+        "data_description": {
+          "host": "IP-адреса або ім'я хоста шлюзу Modbus.",
+          "port": "Порт Modbus TCP (за замовчуванням 502).",
+          "unit_id": "Адреса slave/unit (за замовчуванням 1).",
+          "connection_type": "TCP або RTU.",
+          "serial_port": "Шлях до серійного пристрою для режиму RTU.",
+          "baudrate": "Швидкість для режиму RTU (за замовчуванням 19200)."
+        }
+      },
+      "select_model": {
+        "title": "Вибір моделі інвертора",
+        "description": "Виявлено кілька моделей інвертора. Оберіть ту, що відповідає вашому пристрою.",
+        "data": {
+          "model": "Модель інвертора"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Не вдалося підключитися до інвертора.",
+      "invalid_auth": "Невірні облікові дані автентифікації.",
+      "already_configured": "Цей пристрій вже налаштовано.",
+      "no_inverter_found": "Інвертор за вказаною адресою не знайдено.",
+      "unsupported_model": "Виявлена модель інвертора не підтримується.",
+      "unknown": "Сталася неочікувана помилка."
+    },
+    "abort": {
+      "already_configured": "Цей пристрій вже налаштовано."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Налаштування",
+        "description": "Налаштування опитування, моделі та груп сутностей.",
+        "data": {
+          "scan_interval": "Інтервал опитування (секунди)",
+          "timeout": "Таймаут запиту (секунди)",
+          "model_override": "Перевизначення моделі",
+          "entity_group_pv": "Сутності PV",
+          "entity_group_battery": "Сутності акумулятора",
+          "entity_group_grid": "Сутності мережі",
+          "entity_group_inverter": "Сутності інвертора",
+          "entity_group_eps": "Сутності EPS",
+          "entity_group_energy": "Енергетичні підсумки",
+          "night_mode": "Нічний режим"
+        },
+        "data_description": {
+          "scan_interval": "Як часто опитувати інвертор.",
+          "timeout": "Таймаут запиту в секундах (5-30).",
+          "model_override": "Авто-визначення або ручний вибір моделі.",
+          "entity_group_pv": "Увімкнути сенсори PV-стрінгів.",
+          "entity_group_battery": "Увімкнути сенсори акумулятора.",
+          "entity_group_grid": "Увімкнути сенсори мережі.",
+          "entity_group_inverter": "Увімкнути сенсори інвертора.",
+          "entity_group_eps": "Увімкнути сенсори EPS.",
+          "entity_group_energy": "Увімкнути сенсори енергетичних підсумків.",
+          "night_mode": "Поведінка, коли інвертор спить."
+        }
+      }
+    },
+    "error": {
+      "unknown": "Сталася неочікувана помилка."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "ac_power": { "name": "Потужність змінного струму" },
+      "grid_power": { "name": "Потужність мережі" },
+      "grid_voltage_l1": { "name": "Напруга мережі L1" },
+      "grid_voltage_l2": { "name": "Напруга мережі L2" },
+      "grid_voltage_l3": { "name": "Напруга мережі L3" },
+      "grid_current_l1": { "name": "Струм мережі L1" },
+      "grid_current_l2": { "name": "Струм мережі L2" },
+      "grid_current_l3": { "name": "Струм мережі L3" },
+      "grid_frequency": { "name": "Частота мережі" },
+      "pv1_voltage": { "name": "Напруга PV1" },
+      "pv1_current": { "name": "Струм PV1" },
+      "pv1_power": { "name": "Потужність PV1" },
+      "pv2_voltage": { "name": "Напруга PV2" },
+      "pv2_current": { "name": "Струм PV2" },
+      "pv2_power": { "name": "Потужність PV2" },
+      "pv3_voltage": { "name": "Напруга PV3" },
+      "pv3_current": { "name": "Струм PV3" },
+      "pv3_power": { "name": "Потужність PV3" },
+      "pv4_voltage": { "name": "Напруга PV4" },
+      "pv4_current": { "name": "Струм PV4" },
+      "pv4_power": { "name": "Потужність PV4" },
+      "pv_power_total": { "name": "Загальна потужність PV" },
+      "battery_voltage": { "name": "Напруга акумулятора" },
+      "battery_current": { "name": "Струм акумулятора" },
+      "battery_power": { "name": "Потужність акумулятора" },
+      "battery_soc": { "name": "Заряд акумулятора (SoC)" },
+      "battery_temp": { "name": "Температура акумулятора" },
+      "battery_remaining_energy": { "name": "Залишкова енергія акумулятора" },
+      "feed_in_power": { "name": "Потужність експорту" },
+      "feed_in_energy": { "name": "Енергія експорту" },
+      "consume_power": { "name": "Потужність споживання" },
+      "consume_energy": { "name": "Енергія споживання" },
+      "yield_today": { "name": "Виробіток сьогодні" },
+      "yield_total": { "name": "Загальний виробіток" },
+      "battery_charge_energy_today": { "name": "Енергія заряду акумулятора сьогодні" },
+      "battery_charge_energy_total": { "name": "Загальна енергія заряду акумулятора" },
+      "battery_discharge_energy_today": { "name": "Енергія розряду акумулятора сьогодні" },
+      "battery_discharge_energy_total": { "name": "Загальна енергія розряду акумулятора" },
+      "pv_energy_today": { "name": "Енергія PV сьогодні" },
+      "pv_energy_total": { "name": "Загальна енергія PV" },
+      "eps_power_l1": { "name": "Потужність EPS L1" },
+      "eps_power_l2": { "name": "Потужність EPS L2" },
+      "eps_power_l3": { "name": "Потужність EPS L3" },
+      "eps_voltage_l1": { "name": "Напруга EPS L1" },
+      "eps_voltage_l2": { "name": "Напруга EPS L2" },
+      "eps_voltage_l3": { "name": "Напруга EPS L3" },
+      "eps_current_l1": { "name": "Струм EPS L1" },
+      "eps_current_l2": { "name": "Струм EPS L2" },
+      "eps_current_l3": { "name": "Струм EPS L3" },
+      "inverter_temp": { "name": "Температура інвертора" },
+      "radiator_temp": { "name": "Температура радіатора" },
+      "inverter_status": { "name": "Статус інвертора" },
+      "run_mode": { "name": "Режим роботи" }
+    },
+    "binary_sensor": {
+      "grid_connected": { "name": "Підключено до мережі" },
+      "battery_charging": { "name": "Акумулятор заряджається" },
+      "battery_discharging": { "name": "Акумулятор розряджається" },
+      "pv_producing": { "name": "PV виробляє" },
+      "feed_in_active": { "name": "Експорт активний" },
+      "consuming_from_grid": { "name": "Споживання з мережі" },
+      "inverter_fault": { "name": "Помилка інвертора" },
+      "inverter_sleeping": { "name": "Інвертор спить" }
+    },
+    "select": {
+      "scan_interval": { "name": "Інтервал опитування" }
+    },
+    "number": {
+      "scan_interval_custom": { "name": "Користувацький інтервал опитування" }
+    },
+    "switch": {
+      "entity_group_pv": { "name": "Сутності PV" },
+      "entity_group_battery": { "name": "Сутності акумулятора" },
+      "entity_group_grid": { "name": "Сутності мережі" },
+      "entity_group_inverter": { "name": "Сутності інвертора" },
+      "entity_group_eps": { "name": "Сутності EPS" },
+      "entity_group_energy": { "name": "Сутності енергії" }
+    },
+    "button": {
+      "refresh": { "name": "Оновити" },
+      "reconnect": { "name": "Перепідключитися" }
+    }
+  }
+}
