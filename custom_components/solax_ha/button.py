@@ -13,9 +13,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import SolaxDataUpdateCoordinator
 from .entity import SolaxEntity
 
-BUTTON_KEYS: list[tuple[str, str]] = [
-    ("refresh", "Refresh"),
-    ("reconnect", "Reconnect"),
+BUTTON_KEYS: list[str] = [
+    "refresh",
+    "reconnect",
 ]
 
 
@@ -26,7 +26,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up SolaX button entities."""
     coordinator = entry.runtime_data.coordinator
-    async_add_entities([SolaxButton(coordinator, entry, key, name) for key, name in BUTTON_KEYS])
+    async_add_entities([SolaxButton(coordinator, entry, key) for key in BUTTON_KEYS])
 
 
 class SolaxButton(SolaxEntity, ButtonEntity):
@@ -37,9 +37,8 @@ class SolaxButton(SolaxEntity, ButtonEntity):
         coordinator: SolaxDataUpdateCoordinator,
         entry: ConfigEntry,
         key: str,
-        name: str,
     ) -> None:
-        super().__init__(coordinator, key=key, name=name)
+        super().__init__(coordinator, key=key)
         self._key = key
         data = getattr(coordinator, "data", None)
         serial = getattr(data, "serial_number", None) if data is not None else None
@@ -96,11 +95,11 @@ class SolaxRefreshButton(SolaxButton):
     """Convenience subclass for the refresh button."""
 
     def __init__(self, coordinator, entry):
-        super().__init__(coordinator, entry, "refresh", "Refresh")
+        super().__init__(coordinator, entry, "refresh")
 
 
 class SolaxReconnectButton(SolaxButton):
     """Convenience subclass for the reconnect button."""
 
     def __init__(self, coordinator, entry):
-        super().__init__(coordinator, entry, "reconnect", "Reconnect")
+        super().__init__(coordinator, entry, "reconnect")

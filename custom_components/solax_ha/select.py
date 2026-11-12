@@ -56,7 +56,7 @@ class SolaxSelect(SolaxEntity, SelectEntity):
         coordinator: SolaxDataUpdateCoordinator,
         entry: ConfigEntry,
     ) -> None:
-        super().__init__(coordinator, key="scan_interval", name="Scan Interval")
+        super().__init__(coordinator, key="scan_interval")
         data = getattr(coordinator, "data", None)
         serial = getattr(data, "serial_number", None) if data is not None else None
         if not serial:

@@ -67,7 +67,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # Grid
     SolaxSensorEntityDescription(
         key="grid_voltage_l1",
-        name="Grid Voltage L1",
+        translation_key="grid_voltage_l1",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -76,7 +76,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_voltage_l2",
-        name="Grid Voltage L2",
+        translation_key="grid_voltage_l2",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -85,7 +85,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_voltage_l3",
-        name="Grid Voltage L3",
+        translation_key="grid_voltage_l3",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -94,7 +94,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_current_l1",
-        name="Grid Current L1",
+        translation_key="grid_current_l1",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -103,7 +103,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_current_l2",
-        name="Grid Current L2",
+        translation_key="grid_current_l2",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -112,7 +112,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_current_l3",
-        name="Grid Current L3",
+        translation_key="grid_current_l3",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -121,7 +121,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_power",
-        name="Grid Power",
+        translation_key="grid_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -130,7 +130,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_frequency_l1",
-        name="Grid Frequency L1",
+        translation_key="grid_frequency_l1",
         native_unit_of_measurement=UnitOfFrequency.HERTZ,
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
@@ -139,7 +139,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_frequency_l2",
-        name="Grid Frequency L2",
+        translation_key="grid_frequency_l2",
         native_unit_of_measurement=UnitOfFrequency.HERTZ,
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
@@ -148,7 +148,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="grid_frequency_l3",
-        name="Grid Frequency L3",
+        translation_key="grid_frequency_l3",
         native_unit_of_measurement=UnitOfFrequency.HERTZ,
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
@@ -158,7 +158,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # PV strings
     SolaxSensorEntityDescription(
         key="pv1_voltage",
-        name="PV1 Voltage",
+        translation_key="pv1_voltage",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -167,7 +167,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv1_current",
-        name="PV1 Current",
+        translation_key="pv1_current",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -176,7 +176,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv1_power",
-        name="PV1 Power",
+        translation_key="pv1_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -185,7 +185,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv2_voltage",
-        name="PV2 Voltage",
+        translation_key="pv2_voltage",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -194,7 +194,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv2_current",
-        name="PV2 Current",
+        translation_key="pv2_current",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -203,7 +203,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv2_power",
-        name="PV2 Power",
+        translation_key="pv2_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -212,7 +212,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv3_voltage",
-        name="PV3 Voltage",
+        translation_key="pv3_voltage",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -221,7 +221,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv3_current",
-        name="PV3 Current",
+        translation_key="pv3_current",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -230,7 +230,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv3_power",
-        name="PV3 Power",
+        translation_key="pv3_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -239,7 +239,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv4_voltage",
-        name="PV4 Voltage",
+        translation_key="pv4_voltage",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -248,7 +248,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv4_current",
-        name="PV4 Current",
+        translation_key="pv4_current",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -257,7 +257,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv4_power",
-        name="PV4 Power",
+        translation_key="pv4_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -266,7 +266,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv_power_total",
-        name="PV Power Total",
+        translation_key="pv_power_total",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -276,7 +276,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # Battery
     SolaxSensorEntityDescription(
         key="battery_voltage",
-        name="Battery Voltage",
+        translation_key="battery_voltage",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -285,7 +285,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_current",
-        name="Battery Current",
+        translation_key="battery_current",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -294,7 +294,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_power",
-        name="Battery Power",
+        translation_key="battery_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -303,7 +303,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_soc",
-        name="Battery SoC",
+        translation_key="battery_soc",
         native_unit_of_measurement="%",
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
@@ -312,7 +312,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_temp",
-        name="Battery Temperature",
+        translation_key="battery_temp",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -321,7 +321,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_remaining_energy",
-        name="Battery Remaining Energy",
+        translation_key="battery_remaining_energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=None,
@@ -331,7 +331,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # Feed-in / consume
     SolaxSensorEntityDescription(
         key="feed_in_power",
-        name="Feed-in Power",
+        translation_key="feed_in_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -340,7 +340,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="feed_in_energy",
-        name="Feed-in Energy",
+        translation_key="feed_in_energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -349,7 +349,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="consume_power",
-        name="Consumption Power",
+        translation_key="consume_power",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -358,7 +358,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="consume_energy",
-        name="Consumption Energy",
+        translation_key="consume_energy",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -368,7 +368,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # Yield
     SolaxSensorEntityDescription(
         key="yield_today",
-        name="Yield Today",
+        translation_key="yield_today",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -377,7 +377,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="yield_total",
-        name="Yield Total",
+        translation_key="yield_total",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -387,7 +387,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # Battery energy
     SolaxSensorEntityDescription(
         key="battery_charge_energy_today",
-        name="Battery Charge Energy Today",
+        translation_key="battery_charge_energy_today",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -396,7 +396,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_charge_energy_total",
-        name="Battery Charge Energy Total",
+        translation_key="battery_charge_energy_total",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -405,7 +405,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_discharge_energy_today",
-        name="Battery Discharge Energy Today",
+        translation_key="battery_discharge_energy_today",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -414,7 +414,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="battery_discharge_energy_total",
-        name="Battery Discharge Energy Total",
+        translation_key="battery_discharge_energy_total",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -424,7 +424,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # PV energy
     SolaxSensorEntityDescription(
         key="pv_energy_today",
-        name="PV Energy Today",
+        translation_key="pv_energy_today",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -433,7 +433,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="pv_energy_total",
-        name="PV Energy Total",
+        translation_key="pv_energy_total",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -443,7 +443,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # EPS
     SolaxSensorEntityDescription(
         key="eps_power_l1",
-        name="EPS Power L1",
+        translation_key="eps_power_l1",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -452,7 +452,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_power_l2",
-        name="EPS Power L2",
+        translation_key="eps_power_l2",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -461,7 +461,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_power_l3",
-        name="EPS Power L3",
+        translation_key="eps_power_l3",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
@@ -470,7 +470,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_voltage_l1",
-        name="EPS Voltage L1",
+        translation_key="eps_voltage_l1",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -479,7 +479,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_voltage_l2",
-        name="EPS Voltage L2",
+        translation_key="eps_voltage_l2",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -488,7 +488,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_voltage_l3",
-        name="EPS Voltage L3",
+        translation_key="eps_voltage_l3",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -497,7 +497,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_current_l1",
-        name="EPS Current L1",
+        translation_key="eps_current_l1",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -506,7 +506,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_current_l2",
-        name="EPS Current L2",
+        translation_key="eps_current_l2",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -515,7 +515,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="eps_current_l3",
-        name="EPS Current L3",
+        translation_key="eps_current_l3",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -525,7 +525,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # Temperatures
     SolaxSensorEntityDescription(
         key="inverter_temp",
-        name="Inverter Temperature",
+        translation_key="inverter_temp",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -534,7 +534,7 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     ),
     SolaxSensorEntityDescription(
         key="radiator_temp",
-        name="Radiator Temperature",
+        translation_key="radiator_temp",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -544,13 +544,13 @@ SENSOR_DESCRIPTIONS: list[SolaxSensorEntityDescription] = [
     # Status
     SolaxSensorEntityDescription(
         key="run_mode",
-        name="Run Mode",
+        translation_key="run_mode",
         value_fn=lambda data: data.run_mode,
         group="inverter",
     ),
     SolaxSensorEntityDescription(
         key="inverter_status",
-        name="Inverter Status",
+        translation_key="inverter_status",
         value_fn=lambda data: _status_name(data.inverter_status),
         group="inverter",
     ),
@@ -566,7 +566,7 @@ class SolaxSensor(SolaxEntity, SensorEntity):
         description: SolaxSensorEntityDescription,
         serial: str | None = None,
     ) -> None:
-        super().__init__(coordinator, key=description.key, name=description.name)
+        super().__init__(coordinator, key=description.key)
         self.entity_description = description
         sn = serial
         if not sn:

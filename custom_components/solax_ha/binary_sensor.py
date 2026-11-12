@@ -31,44 +31,44 @@ BINARY_SENSOR_KEYS: list[str] = [
 BINARY_SENSOR_DESCRIPTIONS: dict[str, BinarySensorEntityDescription] = {
     "grid_connected": BinarySensorEntityDescription(
         key="grid_connected",
-        name="Grid Connected",
+        translation_key="grid_connected",
         device_class=BinarySensorDeviceClass.CONNECTIVITY,
     ),
     "battery_charging": BinarySensorEntityDescription(
         key="battery_charging",
-        name="Battery Charging",
+        translation_key="battery_charging",
         device_class=BinarySensorDeviceClass.BATTERY_CHARGING,
     ),
     "battery_discharging": BinarySensorEntityDescription(
         key="battery_discharging",
-        name="Battery Discharging",
+        translation_key="battery_discharging",
         # No standard binary_sensor device class for discharging; BATTERY
         # would render as a "Low" battery state.
         icon="mdi:battery-arrow-down",
     ),
     "pv_producing": BinarySensorEntityDescription(
         key="pv_producing",
-        name="PV Producing",
+        translation_key="pv_producing",
         device_class=BinarySensorDeviceClass.POWER,
     ),
     "feed_in_active": BinarySensorEntityDescription(
         key="feed_in_active",
-        name="Feeding In",
+        translation_key="feed_in_active",
         device_class=BinarySensorDeviceClass.POWER,
     ),
     "consuming_from_grid": BinarySensorEntityDescription(
         key="consuming_from_grid",
-        name="Consuming From Grid",
+        translation_key="consuming_from_grid",
         device_class=BinarySensorDeviceClass.POWER,
     ),
     "inverter_fault": BinarySensorEntityDescription(
         key="inverter_fault",
-        name="Inverter Fault",
+        translation_key="inverter_fault",
         device_class=BinarySensorDeviceClass.PROBLEM,
     ),
     "inverter_sleeping": BinarySensorEntityDescription(
         key="inverter_sleeping",
-        name="Inverter Sleeping",
+        translation_key="inverter_sleeping",
     ),
 }
 
@@ -137,7 +137,6 @@ class SolaxBinarySensor(SolaxEntity, BinarySensorEntity):
         *,
         key: str | None = None,
         description: Any = None,
-        name: str | None = None,
     ) -> None:
         if isinstance(key_or_description, BinarySensorEntityDescription):
             description = key_or_description
@@ -156,13 +155,10 @@ class SolaxBinarySensor(SolaxEntity, BinarySensorEntity):
 
         if description is None:
             description = BINARY_SENSOR_DESCRIPTIONS.get(
-                key, BinarySensorEntityDescription(key=key, name=key.replace("_", " ").title())
+                key, BinarySensorEntityDescription(key=key, translation_key=key)
             )
 
-        if name is None:
-            name = getattr(description, "name", None)
-
-        super().__init__(coordinator, key=key, name=name)
+        super().__init__(coordinator, key=key)
         self.key = key
         self._key = key
         self.entity_description = description

@@ -43,6 +43,15 @@ Copy `custom_components/solax_ha` to your Home Assistant `custom_components` dir
 
 See `docs/` for architecture, connection methods, data model, config, state machine, testing, phases, security, CI, contributing, troubleshooting, and research notes.
 
+### Adding a language
+
+Entity names are translatable. To add a new language, copy
+`custom_components/solax_ha/translations/en.json` to
+`custom_components/solax_ha/translations/<language_code>.json` (for example
+`de.json`) and translate the `entity` section (and optionally the config/options
+strings). Keys must stay unchanged; only the `"name"` values need translating.
+Restart Home Assistant and select the language in your user profile.
+
 ## Security
 
 No secrets are stored in this repository. Credentials live in HA config entries. See `docs/08-security-and-secrets.md`.

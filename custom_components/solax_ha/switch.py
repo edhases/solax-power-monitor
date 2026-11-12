@@ -12,13 +12,13 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import SolaxDataUpdateCoordinator
 from .entity import SolaxEntity
 
-SWITCH_GROUPS: list[tuple[str, str]] = [
-    ("entity_group_pv", "PV Entities"),
-    ("entity_group_battery", "Battery Entities"),
-    ("entity_group_grid", "Grid Entities"),
-    ("entity_group_inverter", "Inverter Entities"),
-    ("entity_group_eps", "EPS Entities"),
-    ("entity_group_energy", "Energy Entities"),
+SWITCH_GROUPS: list[str] = [
+    "entity_group_pv",
+    "entity_group_battery",
+    "entity_group_grid",
+    "entity_group_inverter",
+    "entity_group_eps",
+    "entity_group_energy",
 ]
 
 
@@ -29,7 +29,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up SolaX switch entities."""
     coordinator = entry.runtime_data.coordinator
-    async_add_entities([SolaxSwitch(coordinator, entry, key, name) for key, name in SWITCH_GROUPS])
+    async_add_entities([SolaxSwitch(coordinator, entry, key) for key in SWITCH_GROUPS])
 
 
 class SolaxSwitch(SolaxEntity, SwitchEntity):
@@ -40,9 +40,8 @@ class SolaxSwitch(SolaxEntity, SwitchEntity):
         coordinator: SolaxDataUpdateCoordinator,
         entry: ConfigEntry,
         key: str,
-        name: str,
     ) -> None:
-        super().__init__(coordinator, key=key, name=name)
+        super().__init__(coordinator, key=key)
         self._key = key
         data = getattr(coordinator, "data", None)
         serial = getattr(data, "serial_number", None) if data is not None else None

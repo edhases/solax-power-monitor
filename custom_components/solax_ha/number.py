@@ -31,7 +31,7 @@ class SolaxNumber(SolaxEntity, NumberEntity):
         coordinator: SolaxDataUpdateCoordinator,
         entry: ConfigEntry,
     ) -> None:
-        super().__init__(coordinator, key="scan_interval_custom", name="Custom Scan Interval")
+        super().__init__(coordinator, key="scan_interval_custom")
         data = getattr(coordinator, "data", None)
         serial = getattr(data, "serial_number", None) if data is not None else None
         if not serial:
