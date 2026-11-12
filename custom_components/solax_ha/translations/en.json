@@ -9,7 +9,17 @@
           "method": "Connection method"
         },
         "data_description": {
-          "method": "Choose local (Pocket WiFi), cloud (SolaX Cloud) or Modbus."
+          "method": "Choose local (Pocket WiFi), cloud (SolaX Cloud), Modbus, or 'discover' to scan your network automatically."
+        }
+      },
+      "discover": {
+        "title": "Auto-detect inverter",
+        "description": "Scanning your local network for SolaX dongles. Found: {count}. Select a device or type its IP address.",
+        "data": {
+          "host": "Dongle IP address"
+        },
+        "data_description": {
+          "host": "IP address of the discovered Pocket WiFi dongle."
         }
       },
       "local": {

@@ -9,7 +9,17 @@
           "method": "Метод підключення"
         },
         "data_description": {
-          "method": "Оберіть локальний (Pocket WiFi), хмарний (SolaX Cloud) або Modbus."
+          "method": "Оберіть локальний (Pocket WiFi), хмарний (SolaX Cloud), Modbus, або 'discover' для автоматичного сканування мережі."
+        }
+      },
+      "discover": {
+        "title": "Автовизначення інвертора",
+        "description": "Сканування локальної мережі на наявність донглів SolaX. Знайдено: {count}. Оберіть пристрій або введіть IP-адресу.",
+        "data": {
+          "host": "IP-адреса донгла"
+        },
+        "data_description": {
+          "host": "IP-адреса знайденого Pocket WiFi донгла."
         }
       },
       "local": {

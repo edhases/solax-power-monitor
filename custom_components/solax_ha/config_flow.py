@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import json
 import logging
+import socket
 from typing import Any
 
+import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.components import dhcp
 from homeassistant.config_entries import ConfigEntry, OptionsFlow
 from homeassistant.const import (
     CONF_HOST,
@@ -81,6 +85,56 @@ def _err_from_exception(err: Exception) -> str:
     return "unknown"
 
 
+def _local_ipv4() -> str | None:
+    """Best-effort discovery of this host's LAN IPv4 address."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        sock.connect(("8.8.8.8", 80))
+        return sock.getsockname()[0]
+    except OSError:
+        return None
+    finally:
+        sock.close()
+
+
+async def _async_probe_host(host: str, port: int, timeout: float = 1.0) -> bool:
+    """Return True if the host answers like a SolaX Pocket WiFi dongle."""
+    url = f"http://{host}:{port}/"
+    headers = {"X-Forwarded-For": "5.8.8.8"}
+    form = {"optType": "ReadRealTimeData", "pwd": ""}
+    try:
+        async with (
+            aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as session,
+            session.post(url, data=form, headers=headers) as resp,
+        ):
+            if resp.status >= 400:
+                return False
+            payload = await resp.json(content_type=None)
+    except (TimeoutError, aiohttp.ClientError, ValueError, OSError):
+        return False
+    if not isinstance(payload, dict):
+        return False
+    data = payload.get("Data") or payload.get("data")
+    return isinstance(data, list) and len(data) >= 20
+
+
+async def _async_scan_network(port: int = 80) -> list[str]:
+    """Scan the local /24 subnet for SolaX dongles."""
+    local_ip = _local_ipv4()
+    if not local_ip:
+        return []
+    prefix = local_ip.rsplit(".", 1)[0]
+    hosts = [f"{prefix}.{i}" for i in range(1, 255) if f"{prefix}.{i}" != local_ip]
+    semaphore = asyncio.Semaphore(64)
+
+    async def _check(host: str) -> str | None:
+        async with semaphore:
+            return host if await _async_probe_host(host, port) else None
+
+    results = await asyncio.gather(*(_check(host) for host in hosts))
+    return [host for host in results if host]
+
+
 class SolaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for SolaX HA."""
 
@@ -89,6 +143,8 @@ class SolaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         self._data: dict[str, Any] = {}
         self._models: list[str] = []
+        self._dhcp_host: str | None = None
+        self._found_hosts: list[str] = []
 
     # ------------------------------------------------------------------
     # User step
@@ -101,15 +157,66 @@ class SolaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data["connection_type"] = method
             if method == CONNECTION_TYPE_LOCAL:
                 return await self.async_step_local()
+            if method == "discover":
+                return await self.async_step_discover()
             if method == CONNECTION_TYPE_CLOUD:
                 return await self.async_step_cloud()
             if method == CONNECTION_TYPE_MODBUS:
                 return await self.async_step_modbus()
 
         schema = vol.Schema(
-            {vol.Required(CONF_METHOD, default=CONNECTION_TYPE_LOCAL): vol.In(CONNECTION_TYPES)}
+            {
+                vol.Required(CONF_METHOD, default=CONNECTION_TYPE_LOCAL): vol.In(
+                    [*CONNECTION_TYPES, "discover"]
+                )
+            }
         )
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+
+    # ------------------------------------------------------------------
+    # Auto-discovery (DHCP + subnet scan)
+    # ------------------------------------------------------------------
+    async def async_step_dhcp(self, discovery_info: dhcp.DhcpServiceInfo) -> Any:
+        """Handle a dongle discovered via DHCP."""
+        self._dhcp_host = discovery_info.ip
+        self._data[CONF_METHOD] = CONNECTION_TYPE_LOCAL
+        self._data["connection_type"] = CONNECTION_TYPE_LOCAL
+        return await self.async_step_local()
+
+    async def async_step_discover(self, user_input: dict[str, Any] | None = None) -> Any:
+        """Scan the LAN for SolaX dongles and let the user pick one."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            host = user_input.get("host")
+            if host:
+                self._dhcp_host = host
+                self._data[CONF_METHOD] = CONNECTION_TYPE_LOCAL
+                self._data["connection_type"] = CONNECTION_TYPE_LOCAL
+                return await self.async_step_local()
+
+        found = await _async_scan_network()
+        self._found_hosts = found
+
+        if found:
+            schema = vol.Schema(
+                {
+                    vol.Required("host", default=found[0]): vol.In(found),
+                }
+            )
+            return self.async_show_form(
+                step_id="discover",
+                data_schema=schema,
+                description_placeholders={"count": str(len(found))},
+                errors=errors,
+            )
+
+        self._dhcp_host = None
+        return self.async_show_form(
+            step_id="discover",
+            data_schema=vol.Schema({vol.Optional("host"): str}),
+            description_placeholders={"count": "0"},
+            errors={"base": "no_inverter_found"},
+        )
 
     # ------------------------------------------------------------------
     # Local
@@ -186,9 +293,12 @@ class SolaxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Optional(CONF_USERNAME): str,
             }
         )
+        suggested = dict(user_input or {})
+        if self._dhcp_host and CONF_HOST not in suggested:
+            suggested[CONF_HOST] = self._dhcp_host
         return self.async_show_form(
             step_id="local",
-            data_schema=self.add_suggested_values_to_schema(schema, user_input or {}),
+            data_schema=self.add_suggested_values_to_schema(schema, suggested),
             errors=errors,
         )
 
