@@ -1,11 +1,11 @@
 """Shared test fixtures for solax_ha."""
 import json
-import pathlib
+from pathlib import Path
 
 import pytest
 
 
-FIXTURES = pathlib.Path(__file__).parent / "fixtures"
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def load_fixture(name: str):
