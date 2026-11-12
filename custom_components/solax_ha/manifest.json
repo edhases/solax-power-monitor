@@ -1,0 +1,14 @@
+{
+  "domain": "solax_ha",
+  "name": "SolaX Power Monitor (community)",
+  "codeowners": ["@edhases"],
+  "config_flow": true,
+  "documentation": "https://github.com/edhases/solax-power-monitor",
+  "issue_tracker": "https://github.com/edhases/solax-power-monitor/issues",
+  "requirements": [],
+  "ssdp": [],
+  "zeroconf": [],
+  "homeassistant": "2024.1.0",
+  "iot_class": "local_polling",
+  "version": "0.1.0"
+}
