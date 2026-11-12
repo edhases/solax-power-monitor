@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib
 import inspect
 import logging
 from dataclasses import dataclass
@@ -19,6 +18,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
+from .api.local import SolaxLocalClient
 from .const import (
     CONNECTION_TYPE_CLOUD,
     CONNECTION_TYPE_LOCAL,
@@ -54,68 +54,17 @@ def _default_scan_interval(connection_type: str) -> int:
     }.get(connection_type, DEFAULT_SCAN_INTERVAL_LOCAL)
 
 
-async def _create_local_client(hass: HomeAssistant, entry: ConfigEntry, timeout: int) -> Any:
-    """Import and instantiate the local client, tolerating parallel development."""
-    try:
-        module = importlib.import_module("custom_components.solax_ha.api.local")
-    except Exception as err:
-        raise ConfigEntryNotReady("Local API module is not available yet") from err
-
-    # Prefer an explicit factory if the module provides one.
-    for factory_name in ("create_client", "get_client", "async_create_client", "build_client"):
-        factory = getattr(module, factory_name, None)
-        if callable(factory):
-            try:
-                result = factory(hass, entry)
-                if inspect.isawaitable(result):
-                    result = await result
-                return result
-            except TypeError:
-                continue
-
-    # Discover a client class.
-    client_cls = getattr(module, "SolaxLocalClient", None)
-    if client_cls is None:
-        for name in ("SolaxLocalApi", "LocalClient", "SolaxClient", "SolaxApi", "SolaxLocal"):
-            client_cls = getattr(module, name, None)
-            if client_cls is not None:
-                break
-    if client_cls is None:
-        for name, obj in vars(module).items():
-            if isinstance(obj, type) and ("Client" in name or "Api" in name):
-                client_cls = obj
-                break
-    if client_cls is None:
-        raise ConfigEntryNotReady("No local client class found in api.local")
-
+def _create_local_client(hass: HomeAssistant, entry: ConfigEntry, timeout: int) -> SolaxLocalClient:
+    """Instantiate the local Pocket WiFi client from a config entry."""
     data = dict(entry.data or {})
-    host = data.get(CONF_HOST, data.get("host"))
-    port = data.get(CONF_PORT, data.get("port", 80))
-    password = data.get(CONF_PASSWORD, data.get("password", data.get("pwd")))
-    username = data.get(CONF_USERNAME, data.get("username"))
-
-    strategies = [
-        lambda: client_cls(
-            hass=hass,
-            host=host,
-            port=port,
-            password=password,
-            username=username,
-            timeout=timeout,
-        ),
-        lambda: client_cls(hass, host, port, password, username=username, timeout=timeout),
-        lambda: client_cls(host, port, password, username=username, timeout=timeout),
-        lambda: client_cls(hass, entry),
-        lambda: client_cls(entry),
-    ]
-    last_exc: Exception | None = None
-    for strategy in strategies:
-        try:
-            return strategy()
-        except TypeError as exc:
-            last_exc = exc
-            continue
-    raise ConfigEntryNotReady("Could not instantiate local client") from last_exc
+    return SolaxLocalClient(
+        hass=hass,
+        host=data.get(CONF_HOST, data.get("host")),
+        port=data.get(CONF_PORT, data.get("port", 80)),
+        password=data.get(CONF_PASSWORD, data.get("password", data.get("pwd"))),
+        username=data.get(CONF_USERNAME, data.get("username")),
+        timeout=timeout,
+    )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -139,7 +88,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if connection_type != CONNECTION_TYPE_LOCAL:
         raise ConfigEntryNotReady(f"Connection method {connection_type!r} is not implemented yet")
 
-    client = await _create_local_client(hass, entry, timeout)
+    client = _create_local_client(hass, entry, timeout)
     coordinator = SolaxDataUpdateCoordinator(hass, client, scan_interval, night_mode)
     entry.runtime_data = SolaxRuntimeData(client=client, coordinator=coordinator)
 
