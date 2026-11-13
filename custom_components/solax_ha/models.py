@@ -697,10 +697,12 @@ def _decode_type_102(solax: SolaxData, data: list[Any]) -> None:
 
     # Battery. SoC/remaining/temperature use the 300-length layout.
     solax.battery_voltage = _div(safe_get(data, 20), 10.0)
-    # ``data[137]`` carries the battery power (+ = charging, - = discharging).
-    # Verified against the portal: ~-6 W while the battery sits in standby at
-    # 95 % SoC, instead of mirroring the house load like ``data[136]`` did.
-    solax.battery_power = read_signed16(safe_get(data, 137))
+    # ``data[22]`` is the battery power in watts (+ = charging, - = discharging).
+    # Verified against the portal while charging at 1.25 kW: data[20]=546 (54.6 V),
+    # data[21]=246 (24.6 A), 54.6 * 24.6 = 1343 W, data[22] = 1346 W, cloud
+    # batPower = 1288 W. The house balance (grid 1909 - charge 1346 = 563 W vs
+    # portal 580 W) confirms it.
+    solax.battery_power = read_signed16(safe_get(data, 22))
     if solax.battery_voltage and solax.battery_power is not None:
         solax.battery_current = round(solax.battery_power / solax.battery_voltage, 2)
     solax.battery_soc = _div(safe_get(data, 68), 10.0)
