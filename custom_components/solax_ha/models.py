@@ -674,7 +674,10 @@ def _decode_type_102(solax: SolaxData, data: list[Any]) -> None:
     # AC / grid side.
     solax.grid_voltage_l1 = _div(safe_get(data, 0), 10.0)
     solax.grid_current_l1 = _div(read_signed16(safe_get(data, 1)), 10.0)
-    solax.grid_power = read_signed16(safe_get(data, 2))
+    # NOTE: on this firmware ``data[2]`` is always 0, so it cannot be the grid
+    # power. ``data[136]`` tracks the real grid exchange (verified against the
+    # SolaX cloud portal: -409 W when ~409 W is imported, 0 during an outage).
+    solax.grid_power = read_signed16(safe_get(data, 136))
     solax.grid_frequency_l1 = _div(safe_get(data, 3), 100.0)
 
     # PV strings (two MPPT on this family).
@@ -694,7 +697,10 @@ def _decode_type_102(solax: SolaxData, data: list[Any]) -> None:
 
     # Battery. SoC/remaining/temperature use the 300-length layout.
     solax.battery_voltage = _div(safe_get(data, 20), 10.0)
-    solax.battery_power = read_signed16(safe_get(data, 136))
+    # ``data[137]`` carries the battery power (+ = charging, - = discharging).
+    # Verified against the portal: ~-6 W while the battery sits in standby at
+    # 95 % SoC, instead of mirroring the house load like ``data[136]`` did.
+    solax.battery_power = read_signed16(safe_get(data, 137))
     if solax.battery_voltage and solax.battery_power is not None:
         solax.battery_current = round(solax.battery_power / solax.battery_voltage, 2)
     solax.battery_soc = _div(safe_get(data, 68), 10.0)

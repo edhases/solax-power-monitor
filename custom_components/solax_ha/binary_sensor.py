@@ -17,6 +17,10 @@ from .const import DOMAIN
 from .coordinator import SolaxDataUpdateCoordinator
 from .entity import SolaxEntity
 
+#: Watts below which the BMS reading is treated as "idle" rather than
+#: charging/discharging (the register reports a few watts of noise in standby).
+_BATTERY_POWER_DEADBAND = 25.0
+
 BINARY_SENSOR_KEYS: list[str] = [
     "grid_connected",
     "battery_charging",
@@ -201,7 +205,8 @@ class SolaxBinarySensor(SolaxEntity, BinarySensorEntity):
             if power is None:
                 return None
             try:
-                return float(power) > 0
+                # Ignore the few-watt noise the BMS reports in standby.
+                return float(power) > _BATTERY_POWER_DEADBAND
             except (TypeError, ValueError):
                 return None
 
@@ -210,7 +215,7 @@ class SolaxBinarySensor(SolaxEntity, BinarySensorEntity):
             if power is None:
                 return None
             try:
-                return float(power) < 0
+                return float(power) < -_BATTERY_POWER_DEADBAND
             except (TypeError, ValueError):
                 return None
 
